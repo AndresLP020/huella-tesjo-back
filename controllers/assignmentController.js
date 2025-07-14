@@ -911,3 +911,159 @@ export const markAssignmentCompletedByAdmin = async (req, res) => {
         });
     }
 };
+
+// Actualizar asignación desde administrador
+export const updateAssignmentByAdmin = async (req, res) => {
+    try {
+        const { assignmentId } = req.params;
+        const updateData = req.body;
+        
+        console.log('📝 Admin actualizando asignación:', assignmentId);
+        console.log('📋 Datos de actualización:', updateData);
+
+        // Verificar que el usuario sea administrador
+        if (!req.user || req.user.role !== 'admin') {
+            console.log('❌ Usuario no autorizado:', req.user?.role);
+            return res.status(403).json({
+                success: false,
+                error: 'Solo los administradores pueden actualizar asignaciones'
+            });
+        }
+
+        // Buscar la asignación
+        const assignment = await Assignment.findById(assignmentId);
+        if (!assignment) {
+            console.log('❌ Asignación no encontrada:', assignmentId);
+            return res.status(404).json({
+                success: false,
+                error: 'Asignación no encontrada'
+            });
+        }
+
+        // Validar datos de entrada
+        const allowedFields = ['title', 'description', 'dueDate', 'closeDate', 'isGeneral', 'assignedTo'];
+        const filteredData = {};
+        
+        allowedFields.forEach(field => {
+            if (updateData[field] !== undefined) {
+                filteredData[field] = updateData[field];
+            }
+        });
+
+        // Validaciones específicas
+        if (filteredData.dueDate && filteredData.closeDate) {
+            const dueDate = new Date(filteredData.dueDate);
+            const closeDate = new Date(filteredData.closeDate);
+            
+            if (closeDate < dueDate) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'La fecha de cierre debe ser posterior a la fecha de entrega'
+                });
+            }
+        }
+
+        // Si es asignación general, limpiar assignedTo
+        if (filteredData.isGeneral) {
+            filteredData.assignedTo = [];
+        }
+
+        // Manejar edición específica por docente
+        if (updateData.editMode === 'specific' && updateData.specificTeacherId) {
+            console.log('🎯 Editando para docente específico:', updateData.specificTeacherId);
+            
+            // Verificar que el docente esté asignado a esta asignación
+            const isTeacherAssigned = assignment.assignedTo.some(
+                teacherId => teacherId.toString() === updateData.specificTeacherId
+            );
+            
+            if (!isTeacherAssigned) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'El docente seleccionado no está asignado a esta asignación'
+                });
+            }
+
+            // Crear una nueva asignación específica para el docente
+            const specificAssignment = new Assignment({
+                title: filteredData.title || assignment.title,
+                description: filteredData.description || assignment.description,
+                dueDate: filteredData.dueDate || assignment.dueDate,
+                closeDate: filteredData.closeDate || assignment.closeDate,
+                assignedTo: [updateData.specificTeacherId],
+                createdBy: assignment.createdBy,
+                isGeneral: false,
+                status: 'pending',
+                originalAssignmentId: assignmentId // Referencia a la asignación original
+            });
+
+            await specificAssignment.save();
+
+            // Remover el docente de la asignación original
+            await Assignment.findByIdAndUpdate(
+                assignmentId,
+                {
+                    $pull: { assignedTo: updateData.specificTeacherId }
+                }
+            );
+
+            console.log('✅ Asignación específica creada exitosamente');
+
+            // Actualizar estadísticas del docente
+            await TeacherStats.updateTeacherStats(updateData.specificTeacherId);
+
+            return res.json({
+                success: true,
+                message: 'Asignación específica creada exitosamente',
+                data: specificAssignment,
+                type: 'specific_assignment_created'
+            });
+
+        } else {
+            // Edición normal para todos los docentes
+            console.log('📋 Editando para todos los docentes asignados');
+            
+            const updatedAssignment = await Assignment.findByIdAndUpdate(
+                assignmentId,
+                filteredData,
+                { 
+                    new: true,
+                    runValidators: true 
+                }
+            ).populate('assignedTo', 'nombre apellidoPaterno apellidoMaterno email');
+
+            console.log('✅ Asignación actualizada exitosamente');
+
+            // Actualizar estadísticas de los docentes afectados
+            if (filteredData.assignedTo) {
+                // Actualizar estadísticas de los docentes previamente asignados
+                if (assignment.assignedTo && assignment.assignedTo.length > 0) {
+                    for (const teacherId of assignment.assignedTo) {
+                        await TeacherStats.updateTeacherStats(teacherId);
+                    }
+                }
+                
+                // Actualizar estadísticas de los nuevos docentes asignados
+                if (filteredData.assignedTo.length > 0) {
+                    for (const teacherId of filteredData.assignedTo) {
+                        await TeacherStats.updateTeacherStats(teacherId);
+                    }
+                }
+            }
+
+            return res.json({
+                success: true,
+                message: 'Asignación actualizada exitosamente',
+                data: updatedAssignment,
+                type: 'assignment_updated'
+            });
+        }
+
+    } catch (error) {
+        console.error('Error actualizando asignación por admin:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Error al actualizar la asignación'
+        });
+    }
+};

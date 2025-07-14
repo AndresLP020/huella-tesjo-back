@@ -51,6 +51,11 @@ const assignmentSchema = new mongoose.Schema({
             default: Date.now
         }
     }],
+    originalAssignmentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Assignment',
+        default: null
+    },
     responses: [{
         user: {
             type: mongoose.Schema.Types.ObjectId,

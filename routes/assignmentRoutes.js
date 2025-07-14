@@ -17,7 +17,8 @@ import {
     // Nuevas funciones para administrador
     getAdminAllAssignments,
     getAdminAssignmentStats,
-    markAssignmentCompletedByAdmin
+    markAssignmentCompletedByAdmin,
+    updateAssignmentByAdmin
 } from '../controllers/assignmentController.js';
 
 // Rutas para administradores
@@ -32,6 +33,7 @@ router.post('/',
 router.get('/admin/all', auth, getAdminAllAssignments);
 router.get('/admin/stats', auth, getAdminAssignmentStats);
 router.patch('/admin/:assignmentId/complete', auth, markAssignmentCompletedByAdmin);
+router.put('/admin/:assignmentId', auth, updateAssignmentByAdmin);
 
 // Ruta temporal sin autenticación para pruebas
 router.post('/test', 
