@@ -718,7 +718,6 @@ export const markAssignmentCompleted = async (req, res) => {
         // Verificar que no haya pasado la fecha de cierre
         const now = new Date();
         const closeDate = new Date(assignment.closeDate);
-        
         if (now > closeDate) {
             return res.status(403).json({
                 success: false,
@@ -726,9 +725,30 @@ export const markAssignmentCompleted = async (req, res) => {
             });
         }
 
+        // Crear o actualizar la respuesta específica del docente
+        const teacherResponseIndex = assignment.responses.findIndex(
+            r => r.user.toString() === userId.toString()
+        );
+
+        const responseData = {
+            user: userId,
+            submissionStatus: 'on-time',
+            status: 'submitted',
+            submittedAt: now
+        };
+
+        if (teacherResponseIndex !== -1) {
+            assignment.responses[teacherResponseIndex] = {
+                ...assignment.responses[teacherResponseIndex],
+                ...responseData
+            };
+        } else {
+            assignment.responses.push(responseData);
+        }
+
         // Actualizar la asignación
         assignment.status = 'completed';
-        assignment.completedAt = new Date();
+        assignment.completedAt = now;
         
         const savedAssignment = await assignment.save();
         console.log('✅ Asignación guardada exitosamente');

@@ -40,16 +40,42 @@ teacherStatsSchema.statics.updateTeacherStats = async function(teacherId) {
         assignedTo: teacherId
     });
 
-    // Calcular estadísticas
+    // Calcular estadísticas considerando las respuestas individuales
+    let completed = 0;
+    let pending = 0;
+    let overdue = 0;
+
+    for (const assignment of assignments) {
+        // Buscar la respuesta específica del docente
+        const teacherResponse = assignment.responses.find(
+            r => r.user.toString() === teacherId.toString()
+        );
+
+        if (teacherResponse) {
+            if (teacherResponse.status === 'submitted' && teacherResponse.submissionStatus === 'on-time') {
+                completed++;
+            } else if (teacherResponse.status === 'submitted' && teacherResponse.submissionStatus === 'late') {
+                completed++;  // También cuenta como completado aunque sea tarde
+            } else if (teacherResponse.submissionStatus === 'closed' || (teacherResponse.status === 'reviewed' && !teacherResponse.submittedAt)) {
+                overdue++;
+            } else {
+                pending++;
+            }
+        } else {
+            // Si no hay respuesta, verificar fecha de vencimiento
+            if (new Date(assignment.dueDate) > now) {
+                pending++;
+            } else {
+                overdue++;
+            }
+        }
+    }
+
     const stats = {
         total: assignments.length,
-        completed: assignments.filter(a => a.status === 'completed').length,
-        pending: assignments.filter(a => 
-            a.status === 'pending' && new Date(a.dueDate) > now
-        ).length,
-        overdue: assignments.filter(a => 
-            a.status === 'pending' && new Date(a.dueDate) <= now
-        ).length
+        completed: completed,
+        pending: pending,
+        overdue: overdue
     };
 
     // Actualizar o crear el documento de estadísticas
