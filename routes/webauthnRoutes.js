@@ -126,6 +126,8 @@ router.post('/register', auth, async (req, res) => {
     if (!response) {
       return res.status(400).json({ success: false, message: 'Respuesta requerida' });
     }
+    // Log detallado para depuración
+    console.log('🔍 Payload recibido en /register:', JSON.stringify(response, null, 2));
 
     try {
       // Verificar usando SimpleWebAuthn
