@@ -1,0 +1,12 @@
+# Dependencias
+/node_modules
+/dist
+/build
+
+# Archivos de depuración y registro
+npm-debug.log
+yarn-error.log
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db

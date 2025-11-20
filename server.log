@@ -1,0 +1,28 @@
+nohup: ignoring input
+🔧 Configuración WebAuthn: {
+  rpName: 'Sistema de Seguimiento de Docentes',
+  rpID: 'localhost',
+  origin: 'http://localhost:5173'
+}
+Conectado a MongoDB
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1898:16)
+    at listenInCluster (node:net:1946:12)
+    at Server.listen (node:net:2044:7)
+    at file:///D:/Descargas%20Unidad%20D/Proyectos-Tesjo15/server/Seguimiento-de-docentes-backend/server.js:60:16
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1925:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+
+Node.js v20.14.0

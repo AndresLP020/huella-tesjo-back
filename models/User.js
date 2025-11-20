@@ -1,5 +1,14 @@
 import mongoose from 'mongoose';
 
+/**
+ * Esquema de Usuario con soporte para autenticación biométrica
+ * Campos biométricos según documentación:
+ * - biometric_enabled: boolean - Estado activo/inactivo
+ * - biometric_public_key: text - Clave pública (nunca la privada)
+ * - biometric_credential_id: text - ID único de la credencial
+ * - biometric_counter: integer - Contador de autenticaciones
+ * - biometric_registered_at: timestamp - Fecha de registro
+ */
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -59,6 +68,73 @@ const userSchema = new mongoose.Schema({
   },
   resetPasswordExpires: {
     type: Date,
+    default: null
+  },
+  // Campos biométricos según la documentación
+  biometric_enabled: {
+    type: Boolean,
+    default: false
+  },
+  biometric_public_key: {
+    type: String,
+    default: null
+  },
+  biometric_credential_id: {
+    type: String,
+    default: null
+  },
+  biometric_counter: {
+    type: Number,
+    default: 0
+  },
+  biometric_registered_at: {
+    type: Date,
+    default: null
+  },
+  // Campos para WebAuthn challenge temporal
+  webauthn_challenge: {
+    type: String,
+    default: null
+  },
+  webauthn_challenge_expires: {
+    type: Date,
+    default: null
+  },
+  // WebAuthn Authenticators - Para compatibilidad con la implementación anterior
+  authenticators: [{
+    credentialID: {
+      type: String,
+      required: true
+    },
+    publicKey: {
+      type: String,
+      required: true
+    },
+    counter: {
+      type: Number,
+      required: true,
+      default: 0
+    },
+    transports: [{
+      type: String,
+      enum: ['internal', 'usb', 'nfc', 'ble', 'hybrid']
+    }],
+    deviceName: {
+      type: String,
+      default: 'Dispositivo Biométrico'
+    },
+    registeredAt: {
+      type: Date,
+      default: Date.now
+    },
+    lastUsed: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  // Campo temporal para desafíos WebAuthn
+  currentChallenge: {
+    type: String,
     default: null
   }
 });

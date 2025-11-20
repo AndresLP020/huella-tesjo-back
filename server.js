@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { createServer } from 'http';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
+import webauthnRoutes from './routes/webauthnRoutes.js';
 import userRoutes from './routes/users.js';
 import assignmentRoutes from './routes/assignmentRoutes.js';
 import dailyRecordRoutes from './routes/dailyRecordRoutes.js';
@@ -41,6 +42,7 @@ app.use('/uploads', express.static('uploads'));
 
 // Rutas de la API
 app.use('/api/auth', authRoutes);
+app.use('/api/auth/biometric', webauthnRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/daily-records', dailyRecordRoutes);
