@@ -1,0 +1,242 @@
+# ========================================
+# Node.js y npm
+# ========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Archivos de dependencias
+package-lock.json
+yarn.lock
+.pnp.*
+.yarn/
+
+# ========================================
+# Variables de entorno y configuración
+# ========================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.example
+
+# Archivos de configuración sensibles
+config/database.js
+config/secrets.js
+
+# ========================================
+# Logs y reportes
+# ========================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Reportes de coverage
+coverage/
+*.lcov
+.nyc_output
+
+# ========================================
+# Archivos de base de datos
+# ========================================
+# MongoDB local
+data/
+data/db/
+*.db
+*.sqlite
+*.sqlite3
+
+# Dumps de base de datos
+*.sql
+*.dump
+
+# ========================================
+# Uploads y archivos temporales
+# ========================================
+uploads/
+temp/
+tmp/
+public/uploads/
+storage/
+
+# Archivos de evidencias (opcional - comentar si se quieren versionar)
+uploads/evidencias/
+uploads/perfiles/
+
+# ========================================
+# Sistema operativo
+# ========================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Linux
+*~
+.nfs*
+
+# ========================================
+# IDEs y editores
+# ========================================
+# VSCode
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ========================================
+# Archivos de build y distribución
+# ========================================
+dist/
+build/
+.parcel-cache/
+.cache/
+.next/
+out/
+
+# ========================================
+# Testing
+# ========================================
+.nyc_output
+coverage/
+*.lcov
+test-results/
+playwright-report/
+test-results/
+
+# ========================================
+# Herramientas de desarrollo
+# ========================================
+# ESLint
+.eslintcache
+
+# Stylelint
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# ========================================
+# Runtime y PID
+# ========================================
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ========================================
+# SSL Certificates
+# ========================================
+*.pem
+*.key
+*.cert
+*.crt
+ssl/
+
+# ========================================
+# Docker
+# ========================================
+Dockerfile.local
+docker-compose.override.yml
+.dockerignore
+
+# ========================================
+# Archivos específicos del proyecto
+# ========================================
+# Archivos de scripts de test temporales
+test-*.js
+debug-*.js
+quick-test-*.js
+
+# Archivos de backup
+*.bak
+*.backup
+*.old
+
+# Archivos de WebAuthn credentials para testing
+credentials/
+test-credentials/
+
+# ========================================
+# Archivos de deployment
+# ========================================
+.vercel
+.netlify
+.serverless/
+
+# PM2
+ecosystem.config.js
+.pm2/
+
+# ========================================
+# Documentación generada
+# ========================================
+docs/generated/
+api-docs/
+
+# ========================================
+# Archivos temporales de WebAuthn
+# ========================================
+webauthn-challenges/
+*.challenge
+
+# ========================================
+# Otros
+# ========================================
+*.tgz
+*.tar.gz
+*.rar
+*.zip
+
+# Archivos de lock específicos
+*.lock
